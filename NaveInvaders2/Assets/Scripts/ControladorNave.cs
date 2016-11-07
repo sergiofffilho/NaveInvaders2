@@ -4,8 +4,11 @@ using System.Collections;
 public class ControladorNave : MonoBehaviour {
 
 	public float velocidade;
+	public float distanciaCamera;
 
 	void Start () {
+		distanciaCamera = 8;
+		velocidade = 35;
 	}
 	
 	void Update () {
@@ -15,7 +18,7 @@ public class ControladorNave : MonoBehaviour {
 	}
 
 	void controladorCamera(){
-		Vector3 moverCamera = transform.position - transform.forward * 10 + Vector3.up * 5.0f;
+		Vector3 moverCamera = transform.position - transform.forward * distanciaCamera + Vector3.up * 5.0f;
 		float bias = 0.96f;
 
 		Camera.main.transform.position = Camera.main.transform.position  * bias + moverCamera * (1.0f - bias);
@@ -24,7 +27,7 @@ public class ControladorNave : MonoBehaviour {
 	}
 	void controladorVelocidade(){
 		transform.position += transform.forward * Time.deltaTime * velocidade;
-		transform.Rotate(Input.GetAxis("Vertical"),0.0f, -Input.GetAxis("Horizontal"));
+		transform.Rotate (-Input.GetAxis ("Vertical"), 0.0f, -Input.GetAxis ("Horizontal"));
 
 	} 
 }
