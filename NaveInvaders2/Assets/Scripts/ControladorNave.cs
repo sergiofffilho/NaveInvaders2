@@ -31,7 +31,7 @@ public class ControladorNave : MonoBehaviour {
 	}
 	void controladorVelocidade(){
 		transform.position += transform.forward * Time.deltaTime * velocidade;
-		transform.Rotate (-joystick.Vertical(), 0.0f, -joystick.Horizontal());
+		transform.Rotate (-joystick.Vertical(),  joystick.Horizontal(),0.0f);
 
 	} 
 }
