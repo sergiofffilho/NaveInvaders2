@@ -6,13 +6,17 @@ public class ControladorNave : MonoBehaviour {
 	public float velocidade;
 	public float distanciaCamera;
 
+	JoyStick joystick;
+
 	void Start () {
 		distanciaCamera = 8;
-		velocidade = 35;
+		velocidade = 20;
+
+		joystick = GameObject.FindGameObjectWithTag ("Joystick").GetComponent<JoyStick>();
 	}
 	
 	void Update () {
-		
+
 		controladorVelocidade ();
 		controladorCamera ();
 	}
@@ -27,7 +31,7 @@ public class ControladorNave : MonoBehaviour {
 	}
 	void controladorVelocidade(){
 		transform.position += transform.forward * Time.deltaTime * velocidade;
-		transform.Rotate (-Input.GetAxis ("Vertical"), 0.0f, -Input.GetAxis ("Horizontal"));
+		transform.Rotate (-joystick.Vertical(), 0.0f, -joystick.Horizontal());
 
 	} 
 }
