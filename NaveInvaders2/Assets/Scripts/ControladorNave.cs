@@ -10,7 +10,7 @@ public class ControladorNave : MonoBehaviour {
 
 	void Start () {
 		distanciaCamera = 8;
-		velocidade = 20;
+		velocidade = 30;
 
 		joystick = GameObject.FindGameObjectWithTag ("Joystick").GetComponent<JoyStick>();
 	}
@@ -23,7 +23,7 @@ public class ControladorNave : MonoBehaviour {
 
 	void controladorCamera(){
 		Vector3 moverCamera = transform.position - transform.forward * distanciaCamera + Vector3.up * 5.0f;
-		float bias = 0.96f;
+		float bias = 0.97f;
 
 		Camera.main.transform.position = Camera.main.transform.position  * bias + moverCamera * (1.0f - bias);
 		Camera.main.transform.LookAt (transform.position + transform.forward * 30 );
@@ -32,6 +32,7 @@ public class ControladorNave : MonoBehaviour {
 	void controladorVelocidade(){
 		transform.position += transform.forward * Time.deltaTime * velocidade;
 		transform.Rotate (-joystick.Vertical(),  joystick.Horizontal(),0.0f);
+
 
 	} 
 }
