@@ -4,13 +4,20 @@ using System.Collections;
 public class ControladorNave : MonoBehaviour {
 
 	public float velocidade;
+	public Vector3 movimentacao; 
 	public float distanciaCamera;
 	float aceleracao;
 	bool acelerando;
+	public GameObject prefab;
+	public bool atirar, possoatirar;
 
+	float tempoRecarga ;
 	JoyStick joystick;
 
 	void Start () {
+		possoatirar = true;
+		atirar = false;
+		tempoRecarga = 1;
 		distanciaCamera = 8;
 		velocidade = 30;
 		aceleracao = 0.1f;
@@ -19,10 +26,17 @@ public class ControladorNave : MonoBehaviour {
 	}
 	
 	void Update () {
-
+//		if(Input.GetAxis("Fire1") == 1){
+//			atirar ();
+//		}
 		controladorVelocidade ();
 		controladorCamera ();
 
+		if (atirar){
+			if (possoatirar) {
+				StartCoroutine (shoot ());
+			}
+		}
 	}
 
 	void controladorCamera(){
@@ -34,7 +48,8 @@ public class ControladorNave : MonoBehaviour {
 
 	}
 	void controladorVelocidade(){
-		transform.position += transform.forward * Time.deltaTime * velocidade;
+		movimentacao = transform.forward * Time.deltaTime * velocidade;
+		transform.position += movimentacao;
 		transform.Rotate (-joystick.Vertical(),  joystick.Horizontal(),0.0f);
 	}
 
@@ -50,7 +65,6 @@ public class ControladorNave : MonoBehaviour {
 	}
 
 	void acelerar(){
-		Debug.Log ("a - "+aceleracao);
 		if (aceleracao >= 0 && acelerando) {
 			transform.Translate(Vector3.forward  * aceleracao * Time.deltaTime);
 			aceleracao += 20f * Time.deltaTime;
@@ -71,7 +85,6 @@ public class ControladorNave : MonoBehaviour {
 	}
 
 	void desacelerar(){
-		Debug.Log ("d - "+aceleracao);
 		if (aceleracao <= 32 && acelerando) {
 			transform.Translate(Vector3.forward  * aceleracao * Time.deltaTime);
 			aceleracao -= 20f * Time.deltaTime;
@@ -90,5 +103,18 @@ public class ControladorNave : MonoBehaviour {
 		}
 
 
+	}
+
+	void Disparar(){
+		Instantiate(prefab, new Vector3(2.0f, 2f, 2f), Quaternion.identity);
+	}
+
+	public IEnumerator shoot () {
+		//Instantiate your projectile
+		Disparar();
+		//wait for some time
+		possoatirar = false;
+		yield return new WaitForSeconds (tempoRecarga);
+		possoatirar = true;
 	}
 }
