@@ -147,4 +147,18 @@ public class ControladorNave : MonoBehaviour {
 		yield return new WaitForSeconds (tempoVisualizacaoEscudo);
 		escudo.SetActive (false);
 	}
+
+	void OnCollisionEnter(Collision coll){
+		if (coll.gameObject.CompareTag ("fase")) {
+			Debug.Log ("Morreu fase");
+		}
+
+		if (coll.gameObject.CompareTag ("parede")) {
+			Debug.Log ("Morreu parede");
+		}
+
+		if (coll.gameObject.CompareTag ("porta")) {
+			Debug.Log ("Morreu porta");
+		}
+	}
 }
