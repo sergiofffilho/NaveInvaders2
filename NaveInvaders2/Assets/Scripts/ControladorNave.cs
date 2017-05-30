@@ -4,10 +4,13 @@ using System.Collections;
 public class ControladorNave : MonoBehaviour {
 
 	public float velocidade;
+	public float velocidadeMaxima;
+	float velocidadeMinima;
+
 	public Vector3 movimentacao; 
 	public float distanciaCamera;
 	float aceleracao;
-	bool acelerando;
+	bool acelerando, freando;
 	public GameObject prefab;
 	public bool atirar, possoatirar;
 	public GameObject escudo;
@@ -15,11 +18,14 @@ public class ControladorNave : MonoBehaviour {
 	float tempoRecarga ;
 	float tempoRecargaEscudo;
 	float tempoVisualizacaoEscudo;
+
 	JoyStick joystick;
 
 	bool possoativar;
 
 	void Start () {
+		velocidadeMaxima = 50;
+		velocidadeMinima = 15;
 		possoatirar = true;
 		possoativar = true;
 		atirar = false;
@@ -28,15 +34,13 @@ public class ControladorNave : MonoBehaviour {
 		tempoVisualizacaoEscudo = 8.0f;
 		distanciaCamera = 8;
 		velocidade = 30;
-		aceleracao = 0.1f;
+		aceleracao = 0f;
 
 		joystick = GameObject.FindGameObjectWithTag ("Joystick").GetComponent<JoyStick>();
 	}
 	
 	void Update () {
-//		if(Input.GetAxis("Fire1") == 1){
-//			atirar ();
-//		}
+
 		controladorVelocidade ();
 		controladorCamera ();
 
@@ -57,59 +61,49 @@ public class ControladorNave : MonoBehaviour {
 	}
 
 	void controladorVelocidade(){
+
+		Debug.Log (velocidade);
+
+		if (acelerando && velocidade >= velocidadeMaxima){
+			acelerando = false;
+			aceleracao = 0;
+		}
+		if (freando && velocidade <= velocidadeMinima){
+			freando = false;
+			aceleracao = 0;
+		}
+		if (aceleracao == 0){
+			if (velocidade > 30) {
+				velocidade -= 2f * Time.deltaTime;
+			} else {
+				velocidade += 2f * Time.deltaTime;
+
+			}
+		}
+		velocidade += aceleracao * Time.deltaTime;
 		movimentacao = transform.forward * Time.deltaTime * velocidade;
 		transform.position += movimentacao;
-		transform.Rotate (-joystick.Vertical(),  joystick.Horizontal(),0.0f);
+		transform.Rotate (-joystick.Vertical(), joystick.Horizontal(),0.0f);
 	}
 
 	public void acelerarBotao(){
-		aceleracao = 0.1f;
+		
 		acelerando = true;
-		InvokeRepeating("acelerar", 0, 0.1f);
+		acelerar ();
 	}
+	void acelerar(){
+		aceleracao = 10f;
+		acelerando = true;
+	}	
 
 	public void desacelerarBotao(){
-		acelerando = false;
-		InvokeRepeating("desacelerar", 0, 0.1f);
-	}
-
-	void acelerar(){
-		if (aceleracao >= 0 && acelerando) {
-			transform.Translate(Vector3.forward  * aceleracao * Time.deltaTime);
-			aceleracao += 20f * Time.deltaTime;
-
-		} 
-		if (aceleracao <= 0 && !acelerando) {
-			transform.Translate(Vector3.forward  * aceleracao * Time.deltaTime);
-			aceleracao += 20f * Time.deltaTime;
-		}
-		if (aceleracao >= 30 ) {
-			InvokeRepeating("desacelerar", 0, 0.1f);
-			CancelInvoke ("acelerar");
-		}
-		if (aceleracao >= 0 && !acelerando) {
-			aceleracao = 0.1f;
-			CancelInvoke ("acelerar");
-		}
+		desacelerar ();
 	}
 
 	void desacelerar(){
-		if (aceleracao <= 32 && acelerando) {
-			transform.Translate(Vector3.forward  * aceleracao * Time.deltaTime);
-			aceleracao -= 20f * Time.deltaTime;
-		}
-		if (aceleracao <= 0 && acelerando) {
-			//aceleracao = 0.1f;
-			CancelInvoke ("desacelerar");
-		}
-		if (aceleracao <= 0.2f && !acelerando) {
-			transform.Translate(Vector3.forward  * aceleracao * Time.deltaTime);
-			aceleracao -= 20f * Time.deltaTime;
-		}
-		if (aceleracao <= -32) {
-			InvokeRepeating("acelerar", 0, 0.1f);
-			CancelInvoke ("desacelerar");
-		}
+		freando = true;
+		aceleracao = -10f;
+		
 	}
 
 	public IEnumerator Atirar () {
